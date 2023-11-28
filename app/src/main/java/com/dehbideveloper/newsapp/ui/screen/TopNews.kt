@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.dehbideveloper.newsapp.MockData
+import com.dehbideveloper.newsapp.MockData.getTimeAgo
 import com.dehbideveloper.newsapp.NewsData
 import com.dehbideveloper.newsapp.R
 
@@ -60,7 +61,7 @@ fun TopNewsItem(newsData: NewsData, onNewsClick: ()-> Unit = {}){
             .wrapContentHeight()
             .padding(top = 16.dp, start = 16.dp),
             verticalArrangement = Arrangement.SpaceBetween) {
-            Text(text = newsData.publishedAt, color = Color.White, fontWeight = FontWeight.SemiBold)
+            Text(text = MockData.stringToDate(newsData.publishedAt).getTimeAgo(), color = Color.White, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(80.dp))
             Text(text = newsData.title, color = Color.White, fontWeight = FontWeight.SemiBold)
         }

@@ -1,5 +1,6 @@
 package com.dehbideveloper.newsapp.ui.screen
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
@@ -11,8 +12,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
@@ -26,46 +31,80 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.dehbideveloper.newsapp.MockData
+import com.dehbideveloper.newsapp.MockData.getTimeAgo
 import com.dehbideveloper.newsapp.NewsData
 import com.dehbideveloper.newsapp.R
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun DetailScreen(newsData: NewsData, scrollState: ScrollState){
-    Column(modifier = Modifier.fillMaxWidth().verticalScroll(scrollState).padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Detail Screen", fontWeight = FontWeight.SemiBold)
-        Image(painter = painterResource(id = newsData.image), contentDescription = "")
-        Row (modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween){
-            InfoWithIcon(icon = Icons.Default.Edit, info = newsData.author)
-            InfoWithIcon(icon = Icons.Default.DateRange, info = newsData.publishedAt)
+fun DetailScreen(newsData: NewsData, scrollState: ScrollState, navController: NavController) {
+
+    Scaffold(topBar = {
+        DetailTopAppBar(onBackPressed = { navController.popBackStack()})
+    }) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(scrollState)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = "Detail Screen", fontWeight = FontWeight.SemiBold)
+            Image(painter = painterResource(id = newsData.image), contentDescription = "")
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                InfoWithIcon(icon = Icons.Default.Edit, info = newsData.author)
+                InfoWithIcon(icon = Icons.Default.DateRange, info = MockData.stringToDate(newsData.publishedAt).getTimeAgo())
+            }
+            Text(text = newsData.title, fontWeight = FontWeight.Bold)
+            Text(text = newsData.description, modifier = Modifier.padding(top = 16.dp))
         }
-        Text(text = newsData.title, fontWeight = FontWeight.Bold)
-        Text(text = newsData.description, modifier = Modifier.padding(top = 16.dp))
     }
+
+
 }
 
 @Composable
-fun InfoWithIcon(icon: ImageVector, info: String){
+fun DetailTopAppBar(onBackPressed: () -> Unit = {}) {
+    TopAppBar(title = {
+        Text(text = "Detail Screen", fontWeight = FontWeight.SemiBold)
+    }, navigationIcon = {
+        IconButton(onClick = onBackPressed) {
+            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "")
+        }
+    })
+}
+
+@Composable
+fun InfoWithIcon(icon: ImageVector, info: String) {
     Row {
-        Icon(icon,contentDescription = "Author",
+        Icon(
+            icon,
+            contentDescription = "Author",
             modifier = Modifier.padding(end = 8.dp),
-            colorResource(id = R.color.purple_500))
+            colorResource(id = R.color.purple_500)
+        )
         Text(text = info)
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun DetailScreenPreview(){
-    DetailScreen(NewsData(
-        2,
-        R.drawable.namita,
-        author = "Namita Singh",
-        title = "Cleo Smith news — live: Kidnap suspect 'in hospital again' as 'hard police grind' credited for breakthrough - The Independent",
-        description = "The suspected kidnapper of four-year-old Cleo Smith has been treated in hospital for a second time amid reports he was “attacked” while in custody.",
-        publishedAt = "2021-11-04T04:42:40Z"
-    ), scrollState = rememberScrollState())
+fun DetailScreenPreview() {
+    DetailScreen(
+        NewsData(
+            2,
+            R.drawable.namita,
+            author = "Namita Singh",
+            title = "Cleo Smith news — live: Kidnap suspect 'in hospital again' as 'hard police grind' credited for breakthrough - The Independent",
+            description = "The suspected kidnapper of four-year-old Cleo Smith has been treated in hospital for a second time amid reports he was “attacked” while in custody.",
+            publishedAt = "2021-11-04T04:42:40Z"
+        ), scrollState = rememberScrollState(),
+        rememberNavController()
+    )
 }
