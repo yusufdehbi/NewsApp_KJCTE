@@ -59,13 +59,16 @@ fun Navigation(navController: NavHostController,
         ){
             bottomNavigation(navController, articles)
 
-            composable("Detail/{newsId}",
-                arguments = listOf(navArgument("newsId"){type = NavType.IntType})
+            composable("Detail/{index}",
+                arguments = listOf(navArgument("index"){type = NavType.IntType})
             ){
                     navBackStackEntry ->
-                val id = navBackStackEntry.arguments?.getInt("newsId")
-                val newsData = MockData.getNews(id)
-                DetailScreen(newsData, scrollState, navController = navController)
+                val index = navBackStackEntry.arguments?.getInt("index")
+                index?.let {
+                    val article = articles[index]
+                    DetailScreen(article, scrollState, navController = navController)
+
+                }
             }
         }
     }

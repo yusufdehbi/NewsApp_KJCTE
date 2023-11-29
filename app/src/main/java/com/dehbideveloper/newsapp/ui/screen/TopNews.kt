@@ -42,7 +42,8 @@ fun TopNews(navController: NavController, articles: List<TopNewsArticle>){
         LazyColumn{
             items(articles.size){
                 index ->
-                TopNewsItem(article = articles[index])
+                TopNewsItem(article = articles[index],
+                onNewsClick = { navController.navigate("Detail/$index") })
             }
         }
 
