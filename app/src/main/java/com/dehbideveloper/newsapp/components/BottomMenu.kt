@@ -1,4 +1,4 @@
-package com.dehbideveloper.newsapp.ui.components
+package com.dehbideveloper.newsapp.components
 
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
