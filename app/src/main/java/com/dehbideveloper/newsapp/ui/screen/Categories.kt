@@ -1,9 +1,17 @@
 package com.dehbideveloper.newsapp.ui.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -11,10 +19,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.dehbideveloper.newsapp.MockData
+import com.dehbideveloper.newsapp.MockData.getTimeAgo
 import com.dehbideveloper.newsapp.R
+import com.dehbideveloper.newsapp.models.TopNewsArticle
 import com.dehbideveloper.newsapp.models.getAllArticleCategory
 import com.dehbideveloper.newsapp.network.NewsManager
+import com.skydoves.landscapist.coil.CoilImage
 
 @Composable
 fun Categories(onFetchCategory: (String) -> Unit, newsManager: NewsManager){
@@ -51,4 +67,56 @@ fun CategoryTab(category: String, isSelected: Boolean = false, onFetchCategory: 
             modifier = Modifier.padding(8.dp)
         )
     }
+}
+
+@Composable
+fun ArticleContent(articles: List<TopNewsArticle>, modifier: Modifier = Modifier){
+    LazyColumn{
+        items(articles){
+            article ->
+            Card(modifier.padding(8.dp),
+                border = BorderStroke(2.dp, color = colorResource(id = R.color.purple_500))) {
+                Row(
+                    modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)) {
+                    CoilImage (
+                        imageModel = article.urlToImage,
+                        modifier = Modifier.size(100.dp),
+                        placeHolder = painterResource(id = R.drawable.breaking_news),
+                        error = painterResource(id = R.drawable.breaking_news)
+                    )
+                    Column(modifier.padding(8.dp)) {
+                        Text(text = article.title ?: "Not Available",
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 3, overflow = TextOverflow.Ellipsis
+                        )
+                        Row (modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween){
+                            Text(text = article.author ?: "Not Available")
+                            Text(
+                                text = MockData.stringToDate(
+                                    article.publishedAt ?: "2023-11-10T14:25:20Z"
+                                ).getTimeAgo()
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun ArticleContentPreview(){
+    ArticleContent(articles = listOf(
+        TopNewsArticle(
+            author = "Youssef Dehbi",
+            title = "Breaking news today invented a new programming language that combine all wierd logique of all other programming languages out there, they called kotlin",
+            description = "Breaking news today invented a new programming language that combine all wierd logique of all other programming languages out there, they called kotlin",
+            publishedAt = "2023-11-10T14:25:20Z",
+
+        )
+    ))
 }
