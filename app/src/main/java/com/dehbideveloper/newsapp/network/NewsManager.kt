@@ -21,6 +21,12 @@ class NewsManager {
             _newsResponse
         }
 
+    private val _getArticlesByCategory = mutableStateOf(TopNewsResponse())
+    val getArticlesByCategory: MutableState<TopNewsResponse>
+        @Composable get() = remember {
+            _getArticlesByCategory
+        }
+
     val selectedCategory: MutableState<ArticleCategory?> = mutableStateOf(null)
 
     init {
@@ -47,6 +53,28 @@ class NewsManager {
             }
 
         })
+    }
+
+    fun getArticlesByCategory(category: String){
+        val service = Api.retrofitService.getArticlesByCategory(category, Api.API_KEY)
+        service.enqueue(object : Callback<TopNewsResponse> {
+            override fun onResponse(
+                call: Call<TopNewsResponse>,
+                response: Response<TopNewsResponse>
+            ) {
+                if (response.isSuccessful){
+                    _getArticlesByCategory.value = response.body()!!
+                    Log.d("Article_By_Category", "${_getArticlesByCategory.value}")
+                } else {
+                    Log.d("error", response.message())
+                }
+            }
+
+            override fun onFailure(call: Call<TopNewsResponse>, t: Throwable) {
+                Log.d("error", "${t.message}")
+            }
+
+        } )
     }
 
     fun onSelectedCategoryChanged(category: String){

@@ -35,7 +35,7 @@ import com.skydoves.landscapist.coil.CoilImage
 @Composable
 fun Categories(onFetchCategory: (String) -> Unit, newsManager: NewsManager){
     val tabsItems = getAllArticleCategory()
-    Column(){
+    Column {
         LazyRow(){
             items(tabsItems.size){
                 val category = tabsItems[it]
@@ -46,6 +46,7 @@ fun Categories(onFetchCategory: (String) -> Unit, newsManager: NewsManager){
                 )
             }
         }
+        ArticleContent(articles = newsManager.getArticlesByCategory.value.articles ?: listOf())
     }
 }
 
